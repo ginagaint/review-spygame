@@ -78,7 +78,6 @@
 
 <div id="game-container">
     <div id="character-portrait">
-        <!-- 如果要用網址，把 src 裡的字換成 https://... 開頭的網址 -->
         <img src="twilight.webp" alt="Background">
     </div>
     
@@ -95,7 +94,7 @@
     </div>
     
     <div id="dialogue-box" class="hidden">
-        <div id="speaker-name">黃昏 (Twilight)</div>
+        <div id="speaker-name">黃昏 (Loid)</div>
         <div id="dialogue-text"></div>
     </div>
 </div>
@@ -122,10 +121,10 @@
     let startTime = 0;
 
     const story = [
-        { type: "dialogue", speaker: "黃昏 (Twilight)", pic: "twilight.webp", text: "特務，我們遇到緊急狀況了。安妮亞被敵人綁架，關在一個秘密基地。" },
-        { type: "dialogue", speaker: "黃昏 (Twilight)", pic: "twilight.webp", text: "基地設有整整 20 道英語密碼鎖。請小心，只要答錯 3 次觸發警報，任務就會直接失敗！" },
+        { type: "dialogue", speaker: "黃昏 (Loid)", pic: "twilight.webp", text: "特務，我們遇到緊急狀況了。安妮亞被敵人綁架，關在一個秘密基地。" },
+        { type: "dialogue", speaker: "黃昏 (Loid)", pic: "twilight.webp", text: "基地設有整整 20 道英語密碼鎖。請小心，只要答錯 3 次觸發警報，任務就會直接失敗！" },
         
-        // 關卡 1: 拼單字 (已更新為只給頭尾字母)
+        // 關卡 1: 拼單字
         { type: "dialogue", speaker: "系統提示", pic: "system.avif", text: "【第一關：破解電子大門】請依照圖示與頭尾提示，拼出完整的單字。" },
         { type: "input", emoji: "📱", question: "p _ _ _ e", answer: "phone", nextText: "太棒了！前進下一道鎖吧 ➡️" },
         { type: "input", emoji: "🎤", question: "s _ _ _ _ r", answer: "singer", nextText: "做得很棒！繼續潛入 ➡️" },
@@ -133,20 +132,20 @@
         { type: "input", emoji: "🧥", question: "j _ _ _ _ t", answer: "jacket", nextText: "大門解鎖！進入內部通道 ➡️" },
         
         // 關卡 2: 聽力
-        { type: "dialogue", speaker: "黃昏 (Twilight)", pic: "twilight.webp", text: "大門開了。前方有語音辨識鎖，請點擊按鈕【聽語音】，並選出他們唸出的正確單字。" },
+        { type: "dialogue", speaker: "黃昏 (Loid)", pic: "twilight.webp", text: "大門開了。前方有語音辨識鎖，請點擊按鈕【聽語音】，並選出他們唸出的正確單字。" },
         { type: "audio", textToSpeak: "We need a scientist.", question: "🎧 聽語音，選出正確的字", options: ["baseball player", "scientist", "reporter"], answer: 1, hint: "注意聽，開頭是 sci- 喔！", nextText: "語音辨識通過！繼續前進 ➡️" },
         { type: "audio", textToSpeak: "baseball player", question: "🎧 聽語音，選出正確的字", options: ["baseball player", "police officer", "engineer"], answer: 0, hint: "注意聽，是兩個字組成的職業喔！", nextText: "攔截成功！看看還有什麼 ➡️" },
         { type: "audio", textToSpeak: "Whose umbrella is this?", question: "🎧 聽語音，這是在問什麼物品？", options: ["watch", "key", "umbrella"], answer: 2, hint: "注意聽句子的最後一個字喔！", nextText: "情報正確！往深處走 ➡️" },
         { type: "audio", textToSpeak: "police officer", question: "🎧 聽語音，選出正確的字", options: ["firefighter", "police officer", "YouTuber"], answer: 1, hint: "注意聽，開頭是 po- 喔！", nextText: "厲害！警報暫時解除了 ➡️" },
         
         // 關卡 2.5: 發音規則
-        { type: "dialogue", speaker: "黃昏 (Twilight)", pic: "twilight.webp", text: "等等，這裡還有三道隱藏的語音密碼，似乎是用特別的發音混淆視聽。仔細聽，選出正確的單字！" },
+        { type: "dialogue", speaker: "黃昏 (Loid)", pic: "twilight.webp", text: "等等，這裡還有三道隱藏的語音密碼，似乎是用特別的發音混淆視聽。仔細聽，選出正確的單字！" },
         { type: "audio", textToSpeak: "wrong", question: "🎧 聽語音辨識", options: ["long", "wrong", "ring"], answer: 1, hint: "w 開頭遇到 r 時，w 通常是不發音的喔！", nextText: "識破偽裝！下一個陷阱是？ ➡️" },
         { type: "audio", textToSpeak: "bank", question: "🎧 聽語音辨識", options: ["bang", "band", "bank"], answer: 2, hint: "注意聽字尾，這是有輕微 k 音的 nk 結尾！", nextText: "聽力滿分！繼續破解 ➡️" },
         { type: "audio", textToSpeak: "thumb", question: "🎧 聽語音辨識", options: ["thumb", "thump", "sum"], answer: 0, hint: "字尾的 b 其實是不發音的，只有輕柔的 m 音喔！", nextText: "完美避開陷阱！前往雷射走廊 ➡️" },
         
         // 關卡 3: 文法題
-        { type: "dialogue", speaker: "黃昏 (Twilight)", pic: "twilight.webp", text: "進入紅外線雷射走廊了。這裡有文法感測器，選錯就會觸發警報！" },
+        { type: "dialogue", speaker: "黃昏 (Loid)", pic: "twilight.webp", text: "進入紅外線雷射走廊了。這裡有文法感測器，選錯就會觸發警報！" },
         { type: "choice", question: "___ she want to be an engineer?", options: ["Do", "Does", "Is"], answer: 1, hint: "she 是「孤單老人」，前面應該要搭配什麼呢？", nextText: "文法破解！雷射光線減少了 ➡️" },
         { type: "choice", question: "Whose shoes ___ these?", options: ["is", "are", "do"], answer: 1, hint: "shoes 有兩隻以上，這時候應該要搭配 is 還是 are 呢？", nextText: "感測器關閉！安全通過一段路 ➡️" },
         { type: "choice", question: "Whose watch is ___?", options: ["this", "these", "they"], answer: 0, hint: "watch 只有一個，指著近近的「這一個」時該選哪一個字呢？", nextText: "特務等級的判斷！繼續前進 ➡️" },
@@ -154,7 +153,7 @@
         { type: "choice", question: "Whose keys ___ these?", options: ["is", "are", "does"], answer: 1, hint: "keys 字尾有 s，表示有很多把，這時候要搭配 is 還是 are 呢？", nextText: "雷射走廊突破！前往牢房區 ➡️" },
         
         // 關卡 4: 閱讀與回答
-        { type: "dialogue", speaker: "黃昏 (Twilight)", pic: "twilight.webp", text: "終於找到安妮亞的牢房了！但門口有守衛在盤問，依照提示選出完美的回答來騙過他們！" },
+        { type: "dialogue", speaker: "黃昏 (Loid)", pic: "twilight.webp", text: "終於找到安妮亞的牢房了！但門口有守衛在盤問，依照提示選出完美的回答來騙過他們！" },
         { type: "choice", question: "守衛問：Does he want to be a reporter?", options: ["Yes, he does.", "Yes, he is.", "No, he don't."], answer: 0, hint: "問句是用什麼字開頭，簡答時就要用同一個字結尾喔！", nextText: "成功騙過第一個守衛！ ➡️" },
         { type: "choice", question: "守衛指著桌上的便當盒問：Whose lunch bag is this?", options: ["They're Amy's lunch bags.", "It's Amy's lunch bag.", "It's my shoes."], answer: 1, hint: "lunch bag 只有一個，回答「它」的時候應該用哪一個字開頭呢？", nextText: "守衛沒有起疑！下一個問題 ➡️" },
         { type: "choice", question: "守衛指著地上的鞋子問：Whose shoes are these?", options: ["It's Peter's shoe.", "These is Peter's shoes.", "They're Peter's shoes."], answer: 2, hint: "shoes 有兩隻以上，回答「它們」的時候應該選哪一個字呢？", nextText: "完美的偽裝！快要成功了 ➡️" },
