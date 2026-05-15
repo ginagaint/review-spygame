@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>代號：拯救安妮亞 - 終極題庫版</title>
+    <title>代號：拯救安妮亞 - 情境對話版</title>
     <style>
         body { background-color: #1a1a1a; color: #333; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
         #game-container { width: 800px; height: 650px; background-color: #000; border-radius: 10px; box-shadow: 0 0 30px rgba(46, 204, 113, 0.4); position: relative; display: flex; flex-direction: column; overflow: hidden; border: 2px solid #555; }
@@ -62,7 +62,6 @@
     // ！！！請確認這裡是你的 Google 試算表網址 ！！！
     const webAppUrl = "https://script.google.com/macros/s/AKfycbzGmSVUTwRKuhMpvL7YDDb8E1c2dqzAwWNKAJ4IhhEZ_SNSDYopJwTkvdLNyspKqCEmNg/exec";
 
-    // --- 5 大題型，各 10 題 ---
     const pools = {
         spelling: [
             { type: "input", emoji: "📱", question: "p _ _ _ e", answer: "phone", hint: "打電話用的工具" },
@@ -137,9 +136,7 @@
     let studentClass = '', studentName = '';
     const MAX_WRONG = 5;
 
-    // --- 遊戲初始化邏輯 ---
     function initStory() {
-        // 從每個題庫各自隨機抽出 4 題
         const q1 = realShuffle(pools.spelling).slice(0, 4);
         const q2 = realShuffle(pools.listeningWord).slice(0, 4);
         const q3 = realShuffle(pools.listeningPhonics).slice(0, 4);
@@ -148,7 +145,16 @@
 
         story = [
             { type: "dialogue", speaker: "黃昏 (Loid)", pic: "twilight.webp", text: "特務，任務開始了。前方有 20 道隨機加密防線，請小心應對！" },
-            ...q1, ...q2, ...q3, ...q4, ...q5,
+            { type: "dialogue", speaker: "系統提示", pic: "system.avif", text: "【第一關：破解電子大門】請看圖示並輸入完整的單字密碼。" },
+            ...q1,
+            { type: "dialogue", speaker: "黃昏 (Loid)", pic: "twilight.webp", text: "大門開了。前方是【第二關：語音辨識鎖】，請仔細聽他們唸出的正確單字。" },
+            ...q2,
+            { type: "dialogue", speaker: "黃昏 (Loid)", pic: "twilight.webp", text: "等等，這裡有【第三關：發音聲控陷阱】。注意特別的發音規則，別被混淆了！" },
+            ...q3,
+            { type: "dialogue", speaker: "系統提示", pic: "system.avif", text: "【第四關：文法雷射走廊】進入紅外線區。這裡有文法感測器，選錯就會觸發警報！" },
+            ...q5, // 先進行文法測驗
+            { type: "dialogue", speaker: "黃昏 (Loid)", pic: "twilight.webp", text: "終於找到安妮亞的牢房了！但門口有守衛盤問，【第五關：對話偽裝】，請選出完美的回答！" },
+            ...q4, // 最後進行對話偽裝
             { type: "dialogue", speaker: "安妮亞 (Anya)", pic: "anya.jpg", text: "父親！謝謝特務哥哥/姊姊救我！Waku Waku！🥜" },
             { type: "end", text: "MISSION ACCOMPLISHED" }
         ];
@@ -177,6 +183,9 @@
         playArea.innerHTML = ""; document.getElementById('feedback').innerHTML = "";
         diagBox.classList.add('hidden'); gameContent.classList.remove('hidden');
 
+        // 精準計算當前是第幾題 (排除對話與結局)
+        const currentQuestionNum = story.slice(0, currentStage + 1).filter(s => s.type !== "dialogue" && s.type !== "end").length;
+
         if (data.type === "dialogue") {
             gameContent.classList.add('hidden'); diagBox.classList.remove('hidden');
             document.getElementById('speaker-name').innerText = data.speaker;
@@ -184,9 +193,8 @@
             bgImg.src = data.pic;
             diagBox.onclick = () => { currentStage++; nextStage(); };
         } else if (data.type === "input") {
-            // 加入當前題數進度條
             playArea.innerHTML = `
-                <div class="status-bar">進度：第 ${currentStage} / 20 關</div>
+                <div class="status-bar">進度：第 ${currentQuestionNum} / 20 關</div>
                 <div class="emoji-big">${data.emoji}</div>
                 <h2>請看圖拼出單字</h2>
                 <input type="text" id="ans" class="input-box" placeholder="${data.question}" autocomplete="off">
@@ -204,7 +212,7 @@
             let audioBtn = data.type === "audio" ? `<button class="btn" style="background:#f39c12" onclick="playAudio('${data.textToSpeak}')">🔊 點擊聽語音</button>` : "";
             
             playArea.innerHTML = `
-                <div class="status-bar">進度：第 ${currentStage} / 20 關</div>
+                <div class="status-bar">進度：第 ${currentQuestionNum} / 20 關</div>
                 <h2>${data.question}</h2>
                 ${audioBtn}
                 <div style="width:100%; margin-top:10px;">${btns}</div>
@@ -228,7 +236,6 @@
     function handleCorrect() {
         document.getElementById('feedback').innerHTML = `<div class="correct">✔️ 成功！</div><button id="next-btn" class="btn">進入下一關 ➡️</button>`;
         document.getElementById('next-btn').onclick = () => { currentStage++; nextStage(); };
-        // 鎖定按鈕避免重複點擊
         const btns = document.querySelectorAll('.option-btn, .btn');
         btns.forEach(b => { if(b.id !== 'next-btn') b.disabled = true; });
         if(document.getElementById('ans')) document.getElementById('ans').disabled = true;
@@ -244,7 +251,6 @@
                 <button class="btn" onclick="location.reload()">重新挑戰</button>
             `;
         } else {
-            // --- 這裡就是觸發專屬提示的地方 ---
             document.getElementById('feedback').innerHTML = `
                 <span class="incorrect">❌ 錯誤！警報響起！</span><br>
                 <span style="color: #f39c12; font-size: 20px;">💡 提示：${story[currentStage].hint}</span>
@@ -265,7 +271,7 @@
         const endTime = Date.now();
         const timeSec = Math.floor((endTime - startTime)/1000);
         const timeStr = `${Math.floor(timeSec/60)}分${timeSec%60}秒`;
-        const totalQ = 20; // 固定 20 題
+        const totalQ = 20;
         const acc = Math.round((totalQ / (totalQ + wrongAttempts)) * 100);
 
         document.getElementById('play-area').innerHTML = `
