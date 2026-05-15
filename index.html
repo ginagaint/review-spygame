@@ -3,94 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>代號：拯救安妮亞</title>
+    <title>代號：拯救安妮亞 - 終極題庫版</title>
     <style>
         body { background-color: #1a1a1a; color: #333; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
-        
-        #game-container { 
-            width: 800px; 
-            height: 650px; 
-            background-color: #000; 
-            border-radius: 10px; 
-            box-shadow: 0 0 30px rgba(46, 204, 113, 0.4); 
-            position: relative; 
-            display: flex; 
-            flex-direction: column; 
-            overflow: hidden; 
-            border: 2px solid #555; 
-        }
-
-        #character-portrait { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
-        #character-portrait::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.3); z-index: 1; }
-        .failed-portrait::after { background: rgba(231, 76, 60, 0.6) !important; }
-        
+        #game-container { width: 800px; height: 650px; background-color: #000; border-radius: 10px; box-shadow: 0 0 30px rgba(46, 204, 113, 0.4); position: relative; display: flex; flex-direction: column; overflow: hidden; border: 2px solid #555; }
+        #character-portrait { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; transition: 0.5s; }
+        #character-portrait::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.3); z-index: 1; transition: 0.5s; }
+        .failed-portrait::after { background: rgba(231, 76, 60, 0.7) !important; }
         #character-portrait img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; position: relative; z-index: 0; }
-
-        #hud { position: absolute; top: 20px; right: 20px; font-size: 20px; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); padding: 8px 15px; border-radius: 15px; border: 2px solid #e74c3c; color: white; z-index: 10; }
-
+        #hud { position: absolute; top: 20px; right: 20px; font-size: 20px; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); padding: 8px 15px; border-radius: 15px; border: 2px solid #e74c3c; color: white; z-index: 10; }
         #scene-bg { flex: 1; background: transparent; position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; color: white; text-align: center; }
-
-        #game-content { background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); padding: 30px; border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 0 20px rgba(0, 0, 0, 0.6); width: 85%; display: flex; flex-direction: column; align-items: center; }
-
-        #dialogue-box { height: 150px; background-color: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #0f0; padding: 20px; box-sizing: border-box; border-top: 3px solid #0f0; font-size: 20px; cursor: pointer; position: relative; z-index: 3; }
-
+        #game-content { background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(8px); padding: 30px; border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.2); width: 85%; display: flex; flex-direction: column; align-items: center; }
+        #dialogue-box { height: 150px; background-color: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); color: #0f0; padding: 20px; box-sizing: border-box; border-top: 3px solid #0f0; font-size: 20px; cursor: pointer; position: relative; z-index: 3; }
         #speaker-name { color: #ffeb3b; font-weight: bold; margin-bottom: 10px; font-size: 22px; }
         #dialogue-text { line-height: 1.5; font-family: monospace; }
-        
-        .btn { background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 18px; cursor: pointer; margin: 10px; transition: 0.3s; }
+        .btn { background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 18px; cursor: pointer; margin: 10px; font-weight: bold; }
         .btn:hover { background-color: #45a049; }
-        .btn:disabled { background-color: #7f8c8d; cursor: not-allowed; }
-        
         #next-btn { background-color: #3498db; font-size: 20px; padding: 10px 30px; animation: pulse 1.5s infinite; }
-        #next-btn:hover { background-color: #2980b9; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-        
         .login-input { padding: 12px; font-size: 20px; text-align: center; margin: 10px; border-radius: 5px; border: 2px solid #ccc; width: 250px; display: block; }
-        .audio-btn { background-color: #f39c12; color: white; padding: 15px 30px; border: none; border-radius: 50px; font-size: 24px; cursor: pointer; margin: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: transform 0.1s; }
-        .audio-btn:active { transform: scale(0.95); }
-        .audio-btn:hover { background-color: #e67e22; }
-        
         .input-box { padding: 10px; font-size: 24px; text-align: center; margin: 10px; border-radius: 5px; border: 2px solid #ccc; width: 220px; }
-        .input-box:disabled { background-color: #e0e0e0; color: #555; }
-        
-        .options-container { display: flex; flex-direction: column; width: 100%; margin-top: 15px; }
-        .option-btn { background-color: #fff; color: #333; border: 2px solid #3498db; padding: 12px; margin: 5px 0; font-size: 18px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: bold; }
+        .option-btn { background-color: #fff; color: #333; border: 2px solid #3498db; padding: 12px; margin: 5px 0; font-size: 18px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: bold; width: 100%; }
         .option-btn:hover { background-color: #e1f5fe; }
-        .option-btn:disabled { opacity: 0.8; cursor: not-allowed; background-color: #ddd; border-color: #999; }
-        
         .hidden { display: none !important; }
-        
         #feedback { font-size: 24px; font-weight: bold; margin-top: 10px; min-height: 90px; text-shadow: 2px 2px 4px #000; }
         .correct { color: #2ecc71; }
         .incorrect { color: #e74c3c; line-height: 1.4; }
         .emoji-big { font-size: 60px; margin: 10px; }
-        
-        .leaderboard-table { width: 100%; margin: 10px auto; border-collapse: collapse; background-color: rgba(0, 0, 0, 0.6); color: #fff; border-radius: 8px; overflow: hidden; font-size: 18px; }
-        .leaderboard-table th { background-color: rgba(41, 128, 185, 0.8); padding: 10px; }
-        .leaderboard-table td { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.2); }
-        .leaderboard-table tr:nth-child(2) { color: #f1c40f; font-weight: bold; text-shadow: 1px 1px 2px #000; }
-        .leaderboard-table tr:nth-child(3) { color: #bdc3c7; font-weight: bold; text-shadow: 1px 1px 2px #000; }
-        .leaderboard-table tr:nth-child(4) { color: #cd7f32; font-weight: bold; text-shadow: 1px 1px 2px #000; }
-        .loading { font-size: 24px; color: #f1c40f; animation: pulse 1s infinite; margin-top: 20px; text-shadow: 2px 2px 4px #000; }
+        .status-bar { color: #f1c40f; font-size: 18px; margin-bottom: 10px; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div id="game-container">
-    <div id="character-portrait">
-        <img src="twilight.webp" alt="Background">
-    </div>
-    
-    <div id="hud" class="hidden">生命值：<span id="lives">❤️❤️❤️</span></div>
+    <div id="character-portrait"><img id="bg-img" src="twilight.webp"></div>
+    <div id="hud" class="hidden">生命值：<span id="lives">❤️❤️❤️❤️❤️</span></div>
     
     <div id="scene-bg">
         <div id="game-content">
             <h1 id="title" style="color:#2ecc71; text-shadow: 2px 2px 4px #000;">MISSION START</h1>
-            <input type="text" id="student-class" class="login-input" placeholder="輸入班級 (例: 501)" autocomplete="off">
-            <input type="text" id="student-name" class="login-input" placeholder="輸入姓名 (例: 王小明)" autocomplete="off">
-            <button id="start-btn" class="btn" style="margin-top: 20px;">開始執行任務</button>
+            <div id="login-area">
+                <input type="text" id="student-class" class="login-input" placeholder="輸入班級 (例: 501)" autocomplete="off">
+                <input type="text" id="student-name" class="login-input" placeholder="輸入姓名 (例: 王小明)" autocomplete="off">
+                <button id="start-btn" class="btn" style="margin-top: 20px;">開始執行任務</button>
+            </div>
+            <div id="play-area"></div>
+            <div id="feedback"></div>
         </div>
-        <div id="feedback"></div>
     </div>
     
     <div id="dialogue-box" class="hidden">
@@ -100,348 +59,229 @@
 </div>
 
 <script>
-    const gameContent = document.getElementById('game-content');
-    const dialogueBox = document.getElementById('dialogue-box');
-    const dialogueText = document.getElementById('dialogue-text');
-    const speakerName = document.getElementById('speaker-name');
-    const characterPortrait = document.getElementById('character-portrait');
-    const startBtn = document.getElementById('start-btn');
-    const feedback = document.getElementById('feedback');
-    const hud = document.getElementById('hud');
-    const livesDisplay = document.getElementById('lives');
+    // ！！！請確認這裡是你的 Google 試算表網址 ！！！
+    const webAppUrl = "https://script.google.com/macros/s/AKfycbzGmSVUTwRKuhMpvL7YDDb8E1c2dqzAwWNKAJ4IhhEZ_SNSDYopJwTkvdLNyspKqCEmNg/exec";
 
-    let currentStage = 0;
-    let isTyping = false;
-    let feedbackTimeout; 
-    let wrongAttempts = 0; 
-    const MAX_WRONG = 3;   
+    // --- 5 大題型，各 10 題 ---
+    const pools = {
+        spelling: [
+            { type: "input", emoji: "📱", question: "p _ _ _ e", answer: "phone", hint: "打電話用的工具" },
+            { type: "input", emoji: "🎤", question: "s _ _ _ _ r", answer: "singer", hint: "拿著麥克風唱歌的人" },
+            { type: "input", emoji: "🧥", question: "j _ _ _ _ t", answer: "jacket", hint: "冷的時候穿的外套" },
+            { type: "input", emoji: "👓", question: "g _ _ _ _ _ s", answer: "glasses", hint: "戴在眼睛上的物品" },
+            { type: "input", emoji: "🏥", question: "h _ _ _ _ _ _ l", answer: "hospital", hint: "生病了要去哪裡看醫生？" },
+            { type: "input", emoji: "🚒", question: "f _ _ _ _ _ _ _ _ r", answer: "firefighter", hint: "幫忙救火的英雄" },
+            { type: "input", emoji: "☂️", question: "u _ _ _ _ _ _ a", answer: "umbrella", hint: "下雨天要撐開的東西" },
+            { type: "input", emoji: "💻", question: "e _ _ _ _ _ _ r", answer: "engineer", hint: "寫程式、修理機器的工程師" },
+            { type: "input", emoji: "⌚", question: "w _ _ _ h", answer: "watch", hint: "戴在手腕上看時間的物品" },
+            { type: "input", emoji: "🗝️", question: "k _ y", answer: "key", hint: "開門必備的物品，只有三個字母" }
+        ],
+        listeningWord: [
+            { type: "audio", textToSpeak: "police officer", question: "🎧 聽語音，選出正確職業", options: ["police officer", "firefighter", "singer"], answer: 0, hint: "抓壞人、維持治安的人" },
+            { type: "audio", textToSpeak: "baseball player", question: "🎧 聽語音，選出正確職業", options: ["scientist", "reporter", "baseball player"], answer: 2, hint: "打棒球的運動員" },
+            { type: "audio", textToSpeak: "reporter", question: "🎧 聽語音，選出正確職業", options: ["reporter", "YouTuber", "engineer"], answer: 0, hint: "在電視上播報新聞的人" },
+            { type: "audio", textToSpeak: "scientist", question: "🎧 聽語音，選出正確職業", options: ["singer", "scientist", "police officer"], answer: 1, hint: "在實驗室裡工作的人" },
+            { type: "audio", textToSpeak: "singer", question: "🎧 聽語音，選出正確職業", options: ["baseball player", "singer", "reporter"], answer: 1, hint: "唱歌的人" },
+            { type: "audio", textToSpeak: "YouTuber", question: "🎧 聽語音，選出正確職業", options: ["YouTuber", "engineer", "scientist"], answer: 0, hint: "拍影片上傳網路的人" },
+            { type: "audio", textToSpeak: "lunch bag", question: "🎧 聽語音，這是在說什麼物品？", options: ["lunch bag", "umbrella", "jacket"], answer: 0, hint: "裝午餐的袋子" },
+            { type: "audio", textToSpeak: "umbrella", question: "🎧 聽語音，這是在說什麼物品？", options: ["watch", "key", "umbrella"], answer: 2, hint: "下雨天用的雨傘" },
+            { type: "audio", textToSpeak: "shoes", question: "🎧 聽語音，這是在說什麼物品？", options: ["glasses", "shoes", "phone"], answer: 1, hint: "穿在腳上的鞋子" },
+            { type: "audio", textToSpeak: "watch", question: "🎧 聽語音，這是在說什麼物品？", options: ["key", "watch", "jacket"], answer: 1, hint: "手錶" }
+        ],
+        listeningPhonics: [
+            { type: "audio", textToSpeak: "knock", question: "🎧 聽語音，選出發音正確的單字", options: ["lock", "rock", "knock"], answer: 2, hint: "kn 開頭時，k 是不發音的喔！" },
+            { type: "audio", textToSpeak: "knee", question: "🎧 聽語音，選出發音正確的單字", options: ["knee", "see", "tea"], answer: 0, hint: "膝蓋的英文，kn 開頭 k 不發音" },
+            { type: "audio", textToSpeak: "wrong", question: "🎧 聽語音，選出發音正確的單字", options: ["long", "wrong", "ring"], answer: 1, hint: "wr 開頭時 w 不發音，直接發 r 的音" },
+            { type: "audio", textToSpeak: "write", question: "🎧 聽語音，選出發音正確的單字", options: ["right", "white", "write"], answer: 2, hint: "寫字的英文，wr 開頭 w 不發音" },
+            { type: "audio", textToSpeak: "comb", question: "🎧 聽語音，選出發音正確的單字", options: ["comb", "cone", "come"], answer: 0, hint: "梳子，字尾的 b 其實是不發音的" },
+            { type: "audio", textToSpeak: "climb", question: "🎧 聽語音，選出發音正確的單字", options: ["climb", "crime", "lime"], answer: 0, hint: "爬山，字尾的 b 不發音" },
+            { type: "audio", textToSpeak: "sing", question: "🎧 聽語音，選出發音正確的單字", options: ["sink", "sing", "sin"], answer: 1, hint: "唱歌的英文，ng 結尾" },
+            { type: "audio", textToSpeak: "king", question: "🎧 聽語音，選出發音正確的單字", options: ["kin", "king", "sink"], answer: 1, hint: "國王，ng 結尾" },
+            { type: "audio", textToSpeak: "pink", question: "🎧 聽語音，選出發音正確的單字", options: ["pig", "pin", "pink"], answer: 2, hint: "粉紅色，注意聽字尾有輕輕的 k 音" },
+            { type: "audio", textToSpeak: "bank", question: "🎧 聽語音，選出發音正確的單字", options: ["bang", "band", "bank"], answer: 2, hint: "銀行，nk 結尾有輕微的 k 音" }
+        ],
+        dialogue: [
+            { type: "choice", question: "What do you want to be?", options: ["I want to be a reporter.", "He wants to be a reporter.", "Yes, I do."], answer: 0, hint: "守衛問 you (你)，回答時要自稱 I (我)" },
+            { type: "choice", question: "What does he want to be?", options: ["I want to be a scientist.", "He wants to be a scientist.", "No, he doesn't."], answer: 1, hint: "問句問 he，回答也要用 he" },
+            { type: "choice", question: "What does she want to be?", options: ["She wants to be a singer.", "He wants to be a singer.", "She is a singer."], answer: 0, hint: "問句問 she，回答也要用 she" },
+            { type: "choice", question: "Does he want to be a YouTuber?", options: ["Yes, he does.", "Yes, she does.", "No, he don't."], answer: 0, hint: "Does he 開頭，回答也要有 he does 或 he doesn't" },
+            { type: "choice", question: "Does she want to be an engineer?", options: ["No, she isn't.", "No, she doesn't.", "Yes, he does."], answer: 1, hint: "Does she 開頭，簡答要用 doesn't 結尾" },
+            { type: "choice", question: "Whose watch is this?", options: ["It's Peter's watch.", "They're Peter's watches.", "It's my shoes."], answer: 0, hint: "watch 只有一個，要用 It's 來回答" },
+            { type: "choice", question: "Whose lunch bag is this?", options: ["They're Amy's lunch bags.", "It's Amy's lunch bag.", "Yes, it is."], answer: 1, hint: "lunch bag 只有一個，要用 It's 回答" },
+            { type: "choice", question: "Whose glasses are these?", options: ["It's my glass.", "They're John's glasses.", "These is John's glasses."], answer: 1, hint: "glasses 是複數，要用 They're 回答" },
+            { type: "choice", question: "Whose shoes are these?", options: ["They're my shoes.", "It's my shoe.", "No, they aren't."], answer: 0, hint: "shoes 有兩隻以上，要用 They're 回答" },
+            { type: "choice", question: "Whose key is this?", options: ["It's Mom's key.", "They're Mom's keys.", "It's Mom."], answer: 0, hint: "key 只有一把，要用 It's 回答" }
+        ],
+        grammar: [
+            { type: "choice", question: "What ___ you want to be?", options: ["do", "does", "are"], answer: 0, hint: "遇到 you，前面要配 do" },
+            { type: "choice", question: "What ___ he want to be?", options: ["do", "does", "is"], answer: 1, hint: "he 是「孤單老人」(第三人稱單數)，要用 does" },
+            { type: "choice", question: "She ___ to be a police officer.", options: ["want", "wants", "wanting"], answer: 1, hint: "She 是「孤單老人」，現在式的動作後面要加上 s" },
+            { type: "choice", question: "___ she want to be a singer?", options: ["Do", "Does", "Is"], answer: 1, hint: "she 是孤單老人，問句助動詞要用 Does" },
+            { type: "choice", question: "No, he ___.", options: ["don't", "doesn't", "isn't"], answer: 1, hint: "he 的否定助動詞要用 doesn't" },
+            { type: "choice", question: "Whose ___ is this?", options: ["umbrella", "umbrellas", "glasses"], answer: 0, hint: "is this 配單數物品" },
+            { type: "choice", question: "Whose ___ are these?", options: ["shoe", "shoes", "key"], answer: 1, hint: "are these 配複數物品" },
+            { type: "choice", question: "It is ___ jacket.", options: ["Ken", "Kens", "Ken's"], answer: 2, hint: "要表示「誰的」，名字後面要加一撇 s ('s)" },
+            { type: "choice", question: "___ shoes are these?", options: ["Who", "Whose", "What"], answer: 1, hint: "問「是誰的」要用 Whose" },
+            { type: "choice", question: "They ___ Amy's glasses.", options: ["is", "am", "are"], answer: 2, hint: "They 是複數，be 動詞要用 are" }
+        ]
+    };
 
-    let studentClass = '';
-    let studentName = '';
-    let startTime = 0;
-
-    const story = [
-        { type: "dialogue", speaker: "黃昏 (Loid)", pic: "twilight.webp", text: "特務，我們遇到緊急狀況了。安妮亞被敵人綁架，關在一個秘密基地。" },
-        { type: "dialogue", speaker: "黃昏 (Loid)", pic: "twilight.webp", text: "基地設有整整 20 道英語密碼鎖。請小心，只要答錯 3 次觸發警報，任務就會直接失敗！" },
-        
-        // 關卡 1: 拼單字
-        { type: "dialogue", speaker: "系統提示", pic: "system.avif", text: "【第一關：破解電子大門】請依照圖示與頭尾提示，拼出完整的單字。" },
-        { type: "input", emoji: "📱", question: "p _ _ _ e", answer: "phone", nextText: "太棒了！前進下一道鎖吧 ➡️" },
-        { type: "input", emoji: "🎤", question: "s _ _ _ _ r", answer: "singer", nextText: "做得很棒！繼續潛入 ➡️" },
-        { type: "input", emoji: "👓", question: "g _ _ _ _ _ s", answer: "glasses", nextText: "密碼正確！我們離入口更近了 ➡️" },
-        { type: "input", emoji: "🧥", question: "j _ _ _ _ t", answer: "jacket", nextText: "大門解鎖！進入內部通道 ➡️" },
-        
-        // 關卡 2: 聽力
-        { type: "dialogue", speaker: "黃昏 (Loid)", pic: "twilight.webp", text: "大門開了。前方有語音辨識鎖，請點擊按鈕【聽語音】，並選出他們唸出的正確單字。" },
-        { type: "audio", textToSpeak: "We need a scientist.", question: "🎧 聽語音，選出正確的字", options: ["baseball player", "scientist", "reporter"], answer: 1, hint: "注意聽，開頭是 sci- 喔！", nextText: "語音辨識通過！繼續前進 ➡️" },
-        { type: "audio", textToSpeak: "baseball player", question: "🎧 聽語音，選出正確的字", options: ["baseball player", "police officer", "engineer"], answer: 0, hint: "注意聽，是兩個字組成的職業喔！", nextText: "攔截成功！看看還有什麼 ➡️" },
-        { type: "audio", textToSpeak: "Whose umbrella is this?", question: "🎧 聽語音，這是在問什麼物品？", options: ["watch", "key", "umbrella"], answer: 2, hint: "注意聽句子的最後一個字喔！", nextText: "情報正確！往深處走 ➡️" },
-        { type: "audio", textToSpeak: "police officer", question: "🎧 聽語音，選出正確的字", options: ["firefighter", "police officer", "YouTuber"], answer: 1, hint: "注意聽，開頭是 po- 喔！", nextText: "厲害！警報暫時解除了 ➡️" },
-        
-        // 關卡 2.5: 發音規則
-        { type: "dialogue", speaker: "黃昏 (Loid)", pic: "twilight.webp", text: "等等，這裡還有三道隱藏的語音密碼，似乎是用特別的發音混淆視聽。仔細聽，選出正確的單字！" },
-        { type: "audio", textToSpeak: "wrong", question: "🎧 聽語音辨識", options: ["long", "wrong", "ring"], answer: 1, hint: "w 開頭遇到 r 時，w 通常是不發音的喔！", nextText: "識破偽裝！下一個陷阱是？ ➡️" },
-        { type: "audio", textToSpeak: "bank", question: "🎧 聽語音辨識", options: ["bang", "band", "bank"], answer: 2, hint: "注意聽字尾，這是有輕微 k 音的 nk 結尾！", nextText: "聽力滿分！繼續破解 ➡️" },
-        { type: "audio", textToSpeak: "thumb", question: "🎧 聽語音辨識", options: ["thumb", "thump", "sum"], answer: 0, hint: "字尾的 b 其實是不發音的，只有輕柔的 m 音喔！", nextText: "完美避開陷阱！前往雷射走廊 ➡️" },
-        
-        // 關卡 3: 文法題
-        { type: "dialogue", speaker: "黃昏 (Loid)", pic: "twilight.webp", text: "進入紅外線雷射走廊了。這裡有文法感測器，選錯就會觸發警報！" },
-        { type: "choice", question: "___ she want to be an engineer?", options: ["Do", "Does", "Is"], answer: 1, hint: "she 是「孤單老人」，前面應該要搭配什麼呢？", nextText: "文法破解！雷射光線減少了 ➡️" },
-        { type: "choice", question: "Whose shoes ___ these?", options: ["is", "are", "do"], answer: 1, hint: "shoes 有兩隻以上，這時候應該要搭配 is 還是 are 呢？", nextText: "感測器關閉！安全通過一段路 ➡️" },
-        { type: "choice", question: "Whose watch is ___?", options: ["this", "these", "they"], answer: 0, hint: "watch 只有一個，指著近近的「這一個」時該選哪一個字呢？", nextText: "特務等級的判斷！繼續前進 ➡️" },
-        { type: "choice", question: "What ___ you want to be?", options: ["does", "do", "are"], answer: 1, hint: "遇到 you 的時候，前面應該要搭配 do 還是 does 呢？", nextText: "無懈可擊！離安妮亞更近了 ➡️" },
-        { type: "choice", question: "Whose keys ___ these?", options: ["is", "are", "does"], answer: 1, hint: "keys 字尾有 s，表示有很多把，這時候要搭配 is 還是 are 呢？", nextText: "雷射走廊突破！前往牢房區 ➡️" },
-        
-        // 關卡 4: 閱讀與回答
-        { type: "dialogue", speaker: "黃昏 (Loid)", pic: "twilight.webp", text: "終於找到安妮亞的牢房了！但門口有守衛在盤問，依照提示選出完美的回答來騙過他們！" },
-        { type: "choice", question: "守衛問：Does he want to be a reporter?", options: ["Yes, he does.", "Yes, he is.", "No, he don't."], answer: 0, hint: "問句是用什麼字開頭，簡答時就要用同一個字結尾喔！", nextText: "成功騙過第一個守衛！ ➡️" },
-        { type: "choice", question: "守衛指著桌上的便當盒問：Whose lunch bag is this?", options: ["They're Amy's lunch bags.", "It's Amy's lunch bag.", "It's my shoes."], answer: 1, hint: "lunch bag 只有一個，回答「它」的時候應該用哪一個字開頭呢？", nextText: "守衛沒有起疑！下一個問題 ➡️" },
-        { type: "choice", question: "守衛指著地上的鞋子問：Whose shoes are these?", options: ["It's Peter's shoe.", "These is Peter's shoes.", "They're Peter's shoes."], answer: 2, hint: "shoes 有兩隻以上，回答「它們」的時候應該選哪一個字呢？", nextText: "完美的偽裝！快要成功了 ➡️" },
-        { type: "choice", question: "守衛最後看著你問：What do you want to be?", options: ["I want to be a YouTuber.", "He wants to be a YouTuber.", "Yes, I do."], answer: 0, hint: "守衛問 you (你)，你回答的時候應該自稱什麼呢？", nextText: "守衛放行了！快去開門！ ➡️" },
-        
-        // 結局
-        { type: "dialogue", speaker: "安妮亞 (Anya)", pic: "anya.jpg", text: "父親！特務哥哥/姊姊！你們來救安妮亞了！" },
-        { type: "dialogue", speaker: "安妮亞 (Anya)", pic: "anya.jpg", text: "20道題目全部解開了，英文超級厲害！Waku Waku！🥜" },
-        { type: "end", text: "MISSION ACCOMPLISHED (任務成功！)" }
-    ];
-
-    function shuffleArray(array) {
-        let shuffled = array.slice(); 
-        for (let i = shuffled.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-        }
-        return shuffled;
+    function realShuffle(arr) {
+        return arr.sort(() => Math.random() - 0.5);
     }
 
-    startBtn.addEventListener('click', () => {
+    let story = [];
+    let currentStage = 0;
+    let wrongAttempts = 0;
+    let startTime = 0;
+    let studentClass = '', studentName = '';
+    const MAX_WRONG = 5;
+
+    // --- 遊戲初始化邏輯 ---
+    function initStory() {
+        // 從每個題庫各自隨機抽出 4 題
+        const q1 = realShuffle(pools.spelling).slice(0, 4);
+        const q2 = realShuffle(pools.listeningWord).slice(0, 4);
+        const q3 = realShuffle(pools.listeningPhonics).slice(0, 4);
+        const q4 = realShuffle(pools.dialogue).slice(0, 4);
+        const q5 = realShuffle(pools.grammar).slice(0, 4);
+
+        story = [
+            { type: "dialogue", speaker: "黃昏 (Loid)", pic: "twilight.webp", text: "特務，任務開始了。前方有 20 道隨機加密防線，請小心應對！" },
+            ...q1, ...q2, ...q3, ...q4, ...q5,
+            { type: "dialogue", speaker: "安妮亞 (Anya)", pic: "anya.jpg", text: "父親！謝謝特務哥哥/姊姊救我！Waku Waku！🥜" },
+            { type: "end", text: "MISSION ACCOMPLISHED" }
+        ];
+    }
+
+    document.getElementById('start-btn').addEventListener('click', () => {
         studentClass = document.getElementById('student-class').value.trim();
         studentName = document.getElementById('student-name').value.trim();
-
-        if (!studentClass || !studentName) {
-            alert('總部提示：請務必填寫「班級」與「姓名」才能領取特務身分！');
-            return;
-        }
-
-        startTime = Date.now(); 
-        gameContent.innerHTML = '';
-        dialogueBox.classList.remove('hidden');
-        hud.classList.remove('hidden');
+        if (!studentClass || !studentName) { alert('請輸入特務身分！'); return; }
+        
+        initStory();
+        startTime = Date.now();
+        document.getElementById('login-area').classList.add('hidden');
+        document.getElementById('hud').classList.remove('hidden');
         nextStage();
     });
 
-    dialogueBox.addEventListener('click', () => {
-        if (!isTyping && story[currentStage] && story[currentStage].type === "dialogue") {
-            currentStage++;
-            nextStage();
-        }
-    });
-
-    function typeWriter(text, i, cb) {
-        if (i < text.length) {
-            isTyping = true;
-            dialogueText.innerHTML += text.charAt(i);
-            setTimeout(() => typeWriter(text, i + 1, cb), 30);
-        } else {
-            isTyping = false;
-            if (cb) cb();
-        }
-    }
-
-    function showDialogue(speaker, picUrl, text) {
-        gameContent.classList.add('hidden');
-        speakerName.innerText = speaker;
-        characterPortrait.innerHTML = `<img src="${picUrl}" alt="${speaker}">`;
-        dialogueText.innerHTML = '';
-        typeWriter(text, 0);
-    }
-
-    function showInputQuestion(qData) {
-        dialogueBox.classList.add('hidden');
-        gameContent.classList.remove('hidden');
-        
-        gameContent.innerHTML = `
-            <div class="emoji-big">${qData.emoji}</div>
-            <h2 style="margin-bottom: 20px;">${qData.question}</h2>
-            <input type="text" id="answer-input" class="input-box" placeholder="請輸入完整單字" autocomplete="off">
-            <br>
-            <button id="submit-btn" class="btn">送出密碼</button>
-        `;
-        
-        const inputField = document.getElementById('answer-input');
-        inputField.focus();
-        
-        inputField.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') { document.getElementById('submit-btn').click(); }
-        });
-
-        document.getElementById('submit-btn').addEventListener('click', () => {
-            const userAns = inputField.value.toLowerCase().trim();
-            if (userAns === qData.answer) {
-                inputField.disabled = true; 
-                document.getElementById('submit-btn').disabled = true;
-                showFeedback(true, qData);
-            } else {
-                showFeedback(false, qData);
-            }
-        });
-    }
-
-    function showChoiceQuestion(qData) {
-        dialogueBox.classList.add('hidden');
-        gameContent.classList.remove('hidden');
-        
-        const correctText = qData.options[qData.answer];
-        const shuffledOptions = shuffleArray(qData.options);
-        const newCorrectIndex = shuffledOptions.indexOf(correctText);
-
-        let optionsHtml = '';
-        shuffledOptions.forEach((opt, index) => {
-            optionsHtml += `<button class="option-btn" onclick="checkChoice(${index}, ${newCorrectIndex})">${opt}</button>`;
-        });
-
-        gameContent.innerHTML = `
-            <h2 style="padding: 0 10px; margin-bottom: 20px;">${qData.question}</h2>
-            <div class="options-container">
-                ${optionsHtml}
-            </div>
-        `;
-    }
-
-    function playAudio(text) {
-        window.speechSynthesis.cancel(); 
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'en-US'; 
-        utterance.rate = 0.85; 
-        window.speechSynthesis.speak(utterance);
-    }
-
-    function showAudioQuestion(qData) {
-        dialogueBox.classList.add('hidden');
-        gameContent.classList.remove('hidden');
-        
-        const correctText = qData.options[qData.answer];
-        const shuffledOptions = shuffleArray(qData.options);
-        const newCorrectIndex = shuffledOptions.indexOf(correctText);
-
-        let optionsHtml = '';
-        shuffledOptions.forEach((opt, index) => {
-            optionsHtml += `<button class="option-btn" onclick="checkChoice(${index}, ${newCorrectIndex})">${opt}</button>`;
-        });
-
-        gameContent.innerHTML = `
-            <h2 style="padding: 0 10px; margin-bottom: 10px;">${qData.question}</h2>
-            <button class="audio-btn" onclick="playAudio('${qData.textToSpeak}')">🔊 點擊播放廣播</button>
-            <div class="options-container">
-                ${optionsHtml}
-            </div>
-        `;
-    }
-
-    window.checkChoice = function(selectedIndex, correctIndex) {
-        const currentData = story[currentStage];
-        if (selectedIndex === correctIndex) {
-            const btns = document.querySelectorAll('.option-btn');
-            btns.forEach(b => b.disabled = true);
-            showFeedback(true, currentData);
-        } else {
-            showFeedback(false, currentData);
-        }
-    };
-
-    function updateLivesDisplay() {
-        let hearts = '';
-        for (let i = 0; i < (MAX_WRONG - wrongAttempts); i++) { hearts += '❤️'; }
-        for (let i = 0; i < wrongAttempts; i++) { hearts += '🖤'; }
-        livesDisplay.innerText = hearts;
-    }
-
-    function triggerGameOver() {
-        dialogueBox.classList.add('hidden');
-        hud.classList.add('hidden');
-        characterPortrait.classList.add('failed-portrait');
-        gameContent.classList.remove('hidden');
-        
-        characterPortrait.innerHTML = `<img src="alert.webp" alt="Alert">`;
-        
-        gameContent.innerHTML = `
-            <h1 style="color:#e74c3c; font-size: 40px; text-shadow: 2px 2px 4px #000;">MISSION FAILED</h1>
-            <h2 style="color:white; line-height:1.5; text-shadow: 2px 2px 4px #000;">警報大響！錯誤次數過多！<br>你被敵人發現了，安妮亞被帶往更深處的房間...</h2>
-            <button class="btn" style="background-color:#e74c3c; font-size: 24px; padding: 15px 30px; margin-top:20px;" onclick="location.reload()">🔄 重新執行任務</button>
-        `;
-        feedback.innerHTML = '';
-    }
-
-    function showFeedback(isCorrect, qData) {
-        clearTimeout(feedbackTimeout); 
-        
-        if (isCorrect) {
-            const btnText = qData.nextText || "進入下一題 ➡️";
-            feedback.innerHTML = `
-                <div style="margin-bottom: 15px;"><span class="correct">✔️ 破解成功！</span></div>
-                <button id="next-btn" class="btn">${btnText}</button>
-            `;
-            document.getElementById('next-btn').addEventListener('click', () => {
-                feedback.innerHTML = '';
-                currentStage++;
-                nextStage();
-            });
-        } else {
-            wrongAttempts++;
-            updateLivesDisplay();
-            
-            if (wrongAttempts >= MAX_WRONG) {
-                triggerGameOver();
-                return;
-            }
-
-            let errorHtml = '<span class="incorrect">❌ 錯誤！警報響起，請再試一次！</span>';
-            if (qData.hint) {
-                errorHtml += `<br><span style="color: #f39c12; font-size: 20px;">💡 提示：${qData.hint}</span>`;
-            }
-            feedback.innerHTML = errorHtml;
-            feedbackTimeout = setTimeout(() => { feedback.innerHTML = ''; }, 3500); 
-        }
-    }
-
     function nextStage() {
         if (currentStage >= story.length) return;
-        
-        dialogueBox.classList.remove('hidden');
-        const stageData = story[currentStage];
+        const data = story[currentStage];
+        const playArea = document.getElementById('play-area');
+        const diagBox = document.getElementById('dialogue-box');
+        const bgImg = document.getElementById('bg-img');
+        const gameContent = document.getElementById('game-content');
 
-        if (stageData.type === "dialogue") {
-            showDialogue(stageData.speaker, stageData.pic, stageData.text);
-        } else if (stageData.type === "input") {
-            showInputQuestion(stageData);
-        } else if (stageData.type === "choice") {
-            showChoiceQuestion(stageData);
-        } else if (stageData.type === "audio") {
-            showAudioQuestion(stageData);
-        } else if (stageData.type === "end") {
-            dialogueBox.classList.add('hidden');
-            hud.classList.add('hidden');
-            gameContent.classList.remove('hidden');
-            characterPortrait.innerHTML = `<img src="anya.jpg" alt="Anya">`;
-            
-            const endTime = Date.now();
-            const timeTakenSec = Math.floor((endTime - startTime) / 1000);
-            const mins = Math.floor(timeTakenSec / 60);
-            const secs = timeTakenSec % 60;
-            const timeStr = `${mins}分${secs}秒`;
-            
-            const totalQuestions = 20;
-            const totalAttempts = totalQuestions + wrongAttempts;
-            const accuracy = Math.round((totalQuestions / totalAttempts) * 100);
+        playArea.innerHTML = ""; document.getElementById('feedback').innerHTML = "";
+        diagBox.classList.add('hidden'); gameContent.classList.remove('hidden');
 
-            const webAppUrl = "https://script.google.com/macros/s/AKfycbzGmSVUTwRKuhMpvL7YDDb8E1c2dqzAwWNKAJ4IhhEZ_SNSDYopJwTkvdLNyspKqCEmNg/exec";
-
-            gameContent.innerHTML = `
-                <h1 style="color:#2ecc71; margin-bottom: 5px; text-shadow: 2px 2px 4px #000;">任務成功！安妮亞得救了！</h1>
-                <p style="font-size: 18px; margin: 5px 0; text-shadow: 1px 1px 2px #000;">你的成績：正確率 ${accuracy}% / 時間 ${timeStr}</p>
-                <div class="loading">📡 正在連線總部，上傳成績與獲取全球排名...</div>
+        if (data.type === "dialogue") {
+            gameContent.classList.add('hidden'); diagBox.classList.remove('hidden');
+            document.getElementById('speaker-name').innerText = data.speaker;
+            document.getElementById('dialogue-text').innerText = data.text;
+            bgImg.src = data.pic;
+            diagBox.onclick = () => { currentStage++; nextStage(); };
+        } else if (data.type === "input") {
+            // 加入當前題數進度條
+            playArea.innerHTML = `
+                <div class="status-bar">進度：第 ${currentStage} / 20 關</div>
+                <div class="emoji-big">${data.emoji}</div>
+                <h2>請看圖拼出單字</h2>
+                <input type="text" id="ans" class="input-box" placeholder="${data.question}" autocomplete="off">
+                <br><button class="btn" onclick="checkInput()">送出</button>
             `;
-
-            const url = `${webAppUrl}?cls=${encodeURIComponent(studentClass)}&name=${encodeURIComponent(studentName)}&acc=${accuracy}&timeSec=${timeTakenSec}&timeStr=${encodeURIComponent(timeStr)}`;
-
-            fetch(url, { method: 'GET', redirect: 'follow' })
-                .then(response => {
-                    if (!response.ok) throw new Error(`HTTP 錯誤碼: ${response.status}`);
-                    return response.json();
-                })
-                .then(leaderboard => {
-                    let boardHtml = `<table class="leaderboard-table">
-                        <tr><th>排名</th><th>班級</th><th>特務姓名</th><th>正確率</th><th>作答時間</th></tr>`;
-                    
-                    leaderboard.forEach((row, idx) => {
-                        boardHtml += `<tr>
-                            <td>${idx + 1}</td><td>${row.cls}</td><td>${row.name}</td>
-                            <td>${row.acc}%</td><td>${row.timeStr}</td>
-                        </tr>`;
-                    });
-                    boardHtml += `</table>`;
-
-                    gameContent.innerHTML = `
-                        <h1 style="color:#2ecc71; margin-bottom: 5px; text-shadow: 2px 2px 4px #000;">任務成功！安妮亞得救了！</h1>
-                        <p style="font-size: 18px; margin: 5px 0; color:#bdc3c7;">你的成績已記錄：正確率 ${accuracy}% / 時間 ${timeStr}</p>
-                        <h3 style="margin: 10px 0; color: #ffeb3b; text-shadow: 2px 2px 4px #000;">🏆 總部特務榮譽榜 🏆</h3>
-                        ${boardHtml}
-                        <button class="btn" style="margin-top: 15px;" onclick="location.reload()">重新執行任務</button>
-                    `;
-                })
-                .catch(error => {
-                    console.error("連線錯誤:", error);
-                    gameContent.innerHTML = `
-                        <h1 style="color:#2ecc71; margin-bottom: 5px; text-shadow: 2px 2px 4px #000;">任務成功！安妮亞得救了！</h1>
-                        <p style="color:#e74c3c; font-size: 20px; text-shadow: 2px 2px 4px #000;">⚠️ 無法連線到排行榜總部。</p>
-                        <p style="color:#f1c40f; font-size: 16px;">技術診斷：${error.message}</p>
-                        <p style="color:#ddd; font-size: 14px;">(提示：請確認 Google Apps Script 已部署為「新版本」，且存取權限為「所有人」)</p>
-                        <button class="btn" style="margin-top: 15px;" onclick="location.reload()">再玩一次</button>
-                    `;
-                });
+            document.getElementById('ans').focus();
+            document.getElementById('ans').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') checkInput();
+            });
+        } else if (data.type === "choice" || data.type === "audio") {
+            const correctText = data.options[data.answer];
+            const shuffledOptions = realShuffle([...data.options]);
+            const newIdx = shuffledOptions.indexOf(correctText);
+            let btns = shuffledOptions.map((o, i) => `<button class="option-btn" onclick="checkChoice(${i}, ${newIdx})">${o}</button>`).join("");
+            let audioBtn = data.type === "audio" ? `<button class="btn" style="background:#f39c12" onclick="playAudio('${data.textToSpeak}')">🔊 點擊聽語音</button>` : "";
+            
+            playArea.innerHTML = `
+                <div class="status-bar">進度：第 ${currentStage} / 20 關</div>
+                <h2>${data.question}</h2>
+                ${audioBtn}
+                <div style="width:100%; margin-top:10px;">${btns}</div>
+            `;
+        } else if (data.type === "end") {
+            finishGame();
         }
     }
-</script>
 
+    window.checkInput = () => {
+        const userAns = document.getElementById('ans').value.toLowerCase().trim();
+        if (userAns === story[currentStage].answer.toLowerCase()) handleCorrect();
+        else handleWrong();
+    };
+
+    window.checkChoice = (sel, cor) => {
+        if (sel === cor) handleCorrect();
+        else handleWrong();
+    };
+
+    function handleCorrect() {
+        document.getElementById('feedback').innerHTML = `<div class="correct">✔️ 成功！</div><button id="next-btn" class="btn">進入下一關 ➡️</button>`;
+        document.getElementById('next-btn').onclick = () => { currentStage++; nextStage(); };
+        // 鎖定按鈕避免重複點擊
+        const btns = document.querySelectorAll('.option-btn, .btn');
+        btns.forEach(b => { if(b.id !== 'next-btn') b.disabled = true; });
+        if(document.getElementById('ans')) document.getElementById('ans').disabled = true;
+    }
+
+    function handleWrong() {
+        wrongAttempts++; updateLives();
+        if (wrongAttempts >= MAX_WRONG) {
+            document.getElementById('bg-img').src = "alert.webp";
+            document.getElementById('game-content').innerHTML = `
+                <h1 style="color:#e74c3c; font-size:40px;">MISSION FAILED</h1>
+                <h2>生命值已耗盡，任務失敗！</h2>
+                <button class="btn" onclick="location.reload()">重新挑戰</button>
+            `;
+        } else {
+            // --- 這裡就是觸發專屬提示的地方 ---
+            document.getElementById('feedback').innerHTML = `
+                <span class="incorrect">❌ 錯誤！警報響起！</span><br>
+                <span style="color: #f39c12; font-size: 20px;">💡 提示：${story[currentStage].hint}</span>
+            `;
+        }
+    }
+
+    function updateLives() {
+        let h = ''; 
+        for(let i=0; i < MAX_WRONG - wrongAttempts; i++) h += '❤️'; 
+        for(let i=0; i < wrongAttempts; i++) h += '🖤';
+        document.getElementById('lives').innerText = h;
+    }
+
+    function playAudio(t) { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t); u.lang='en-US'; window.speechSynthesis.speak(u); }
+
+    function finishGame() {
+        const endTime = Date.now();
+        const timeSec = Math.floor((endTime - startTime)/1000);
+        const timeStr = `${Math.floor(timeSec/60)}分${timeSec%60}秒`;
+        const totalQ = 20; // 固定 20 題
+        const acc = Math.round((totalQ / (totalQ + wrongAttempts)) * 100);
+
+        document.getElementById('play-area').innerHTML = `
+            <h1 style="color:#2ecc71;">任務成功！</h1>
+            <p style="font-size: 18px;">正確率：${acc}% | 時間：${timeStr}</p>
+            <p class="status-bar">📡 正在上傳成績至總部...</p>
+        `;
+        
+        fetch(`${webAppUrl}?cls=${encodeURIComponent(studentClass)}&name=${encodeURIComponent(studentName)}&acc=${acc}&timeSec=${timeSec}&timeStr=${encodeURIComponent(timeStr)}`, {mode:'no-cors'})
+        .then(() => {
+            document.getElementById('play-area').innerHTML += `
+                <p style="color:#f1c40f">✅ 成績已送達 Loid 的試算表！</p>
+                <button class="btn" onclick="location.reload()">再玩一次</button>
+            `;
+        });
+    }
+</script>
 </body>
 </html>
