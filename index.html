@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>代號：拯救安妮亞 - 情境對話版</title>
+    <title>代號：拯救安妮亞 - 情境劇情版</title>
     <style>
         body { background-color: #1a1a1a; color: #333; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
         #game-container { width: 800px; height: 650px; background-color: #000; border-radius: 10px; box-shadow: 0 0 30px rgba(46, 204, 113, 0.4); position: relative; display: flex; flex-direction: column; overflow: hidden; border: 2px solid #555; }
@@ -144,18 +144,32 @@
         const q5 = realShuffle(pools.grammar).slice(0, 4);
 
         story = [
-            { type: "dialogue", speaker: "黃昏 (Loid)", pic: "twilight.webp", text: "特務，任務開始了。前方有 20 道隨機加密防線，請小心應對！" },
-            { type: "dialogue", speaker: "系統提示", pic: "system.avif", text: "【第一關：破解電子大門】請看圖示並輸入完整的單字密碼。" },
+            // 開場情境
+            { type: "dialogue", speaker: "黃昏 (Loid)", pic: "twilight.webp", text: "緊急狀況！安妮亞被壞人抓走了，被困在一個秘密基地裡！" },
+            { type: "dialogue", speaker: "黃昏 (Loid)", pic: "twilight.webp", text: "我們需要你的幫忙來解救她！基地有五大防線，總共 20 道密碼鎖。請小心，答錯 5 次任務就會失敗！" },
+            
+            // 第一大題：拼字
+            { type: "dialogue", speaker: "黃昏 (Loid)", pic: "twilight.webp", text: "我們到達門口了。【第一關：電子大門】門上顯示了一些圖示，你需要拼出正確的單字密碼才能開門！" },
             ...q1,
-            { type: "dialogue", speaker: "黃昏 (Loid)", pic: "twilight.webp", text: "大門開了。前方是【第二關：語音辨識鎖】，請仔細聽他們唸出的正確單字。" },
+            
+            // 第二大題：聽力單字
+            { type: "dialogue", speaker: "黃昏 (Loid)", pic: "twilight.webp", text: "大門開了！但前方是【第二關：語音辨識鎖】。壞人設定了語音密碼，仔細聽他們唸出的正確單字。" },
             ...q2,
-            { type: "dialogue", speaker: "黃昏 (Loid)", pic: "twilight.webp", text: "等等，這裡有【第三關：發音聲控陷阱】。注意特別的發音規則，別被混淆了！" },
+            
+            // 第三大題：聽力發音
+            { type: "dialogue", speaker: "黃昏 (Loid)", pic: "twilight.webp", text: "等等，這裡有【第三關：聲控陷阱】！壞人用了特殊的發音規則來混淆我們，選出發音正確的單字！" },
             ...q3,
-            { type: "dialogue", speaker: "系統提示", pic: "system.avif", text: "【第四關：文法雷射走廊】進入紅外線區。這裡有文法感測器，選錯就會觸發警報！" },
-            ...q5, // 先進行文法測驗
-            { type: "dialogue", speaker: "黃昏 (Loid)", pic: "twilight.webp", text: "終於找到安妮亞的牢房了！但門口有守衛盤問，【第五關：對話偽裝】，請選出完美的回答！" },
-            ...q4, // 最後進行對話偽裝
-            { type: "dialogue", speaker: "安妮亞 (Anya)", pic: "anya.jpg", text: "父親！謝謝特務哥哥/姊姊救我！Waku Waku！🥜" },
+            
+            // 第四大題：文法
+            { type: "dialogue", speaker: "黃昏 (Loid)", pic: "twilight.webp", text: "突破陷阱了！前方是【第四關：文法雷射走廊】。這裡佈滿紅外線感測器，必須選出正確的文法才能安全通過！" },
+            ...q5,
+            
+            // 第五大題：對話
+            { type: "dialogue", speaker: "黃昏 (Loid)", pic: "twilight.webp", text: "快到了！安妮亞就被關在前面的牢房！但是門口有守衛在盤問，【第五關：對話偽裝】，選出完美的回答騙過他們！" },
+            ...q4,
+            
+            // 結局
+            { type: "dialogue", speaker: "安妮亞 (Anya)", pic: "anya.jpg", text: "父親！特務哥哥/姊姊！你們來救安妮亞了！Waku Waku！🥜" },
             { type: "end", text: "MISSION ACCOMPLISHED" }
         ];
     }
@@ -163,7 +177,7 @@
     document.getElementById('start-btn').addEventListener('click', () => {
         studentClass = document.getElementById('student-class').value.trim();
         studentName = document.getElementById('student-name').value.trim();
-        if (!studentClass || !studentName) { alert('請輸入特務身分！'); return; }
+        if (!studentClass || !studentName) { alert('總部提示：請輸入班級與姓名確認特務身分！'); return; }
         
         initStory();
         startTime = Date.now();
@@ -198,7 +212,7 @@
                 <div class="emoji-big">${data.emoji}</div>
                 <h2>請看圖拼出單字</h2>
                 <input type="text" id="ans" class="input-box" placeholder="${data.question}" autocomplete="off">
-                <br><button class="btn" onclick="checkInput()">送出</button>
+                <br><button class="btn" onclick="checkInput()">送出密碼</button>
             `;
             document.getElementById('ans').focus();
             document.getElementById('ans').addEventListener('keypress', function (e) {
@@ -234,7 +248,7 @@
     };
 
     function handleCorrect() {
-        document.getElementById('feedback').innerHTML = `<div class="correct">✔️ 成功！</div><button id="next-btn" class="btn">進入下一關 ➡️</button>`;
+        document.getElementById('feedback').innerHTML = `<div class="correct">✔️ 破解成功！</div><button id="next-btn" class="btn">進入下一關 ➡️</button>`;
         document.getElementById('next-btn').onclick = () => { currentStage++; nextStage(); };
         const btns = document.querySelectorAll('.option-btn, .btn');
         btns.forEach(b => { if(b.id !== 'next-btn') b.disabled = true; });
@@ -247,8 +261,8 @@
             document.getElementById('bg-img').src = "alert.webp";
             document.getElementById('game-content').innerHTML = `
                 <h1 style="color:#e74c3c; font-size:40px;">MISSION FAILED</h1>
-                <h2>生命值已耗盡，任務失敗！</h2>
-                <button class="btn" onclick="location.reload()">重新挑戰</button>
+                <h2>生命值已耗盡，安妮亞被轉移了！</h2>
+                <button class="btn" onclick="location.reload()">重新挑戰任務</button>
             `;
         } else {
             document.getElementById('feedback').innerHTML = `
@@ -271,19 +285,19 @@
         const endTime = Date.now();
         const timeSec = Math.floor((endTime - startTime)/1000);
         const timeStr = `${Math.floor(timeSec/60)}分${timeSec%60}秒`;
-        const totalQ = 20;
+        const totalQ = 20; 
         const acc = Math.round((totalQ / (totalQ + wrongAttempts)) * 100);
 
         document.getElementById('play-area').innerHTML = `
             <h1 style="color:#2ecc71;">任務成功！</h1>
-            <p style="font-size: 18px;">正確率：${acc}% | 時間：${timeStr}</p>
+            <p style="font-size: 18px;">正確率：${acc}% | 破關時間：${timeStr}</p>
             <p class="status-bar">📡 正在上傳成績至總部...</p>
         `;
         
         fetch(`${webAppUrl}?cls=${encodeURIComponent(studentClass)}&name=${encodeURIComponent(studentName)}&acc=${acc}&timeSec=${timeSec}&timeStr=${encodeURIComponent(timeStr)}`, {mode:'no-cors'})
         .then(() => {
             document.getElementById('play-area').innerHTML += `
-                <p style="color:#f1c40f">✅ 成績已送達 Loid 的試算表！</p>
+                <p style="color:#f1c40f">✅ 成績已成功送達 Loid 的資料庫！</p>
                 <button class="btn" onclick="location.reload()">再玩一次</button>
             `;
         });
